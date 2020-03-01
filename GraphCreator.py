@@ -11,9 +11,10 @@ def plot_greeks(option, x_range: tuple = (0, 100), step: float = 0.01):
     theta_data = [option.theta_func(x) for x in x_data]
     vega_data = [option.vega_func(x) for x in x_data]
 
-    fig, (ax1, ax2, ax3, ax4, ax5, ax6) = plt.subplots(6, 1, figsize=(10, 10))
+    fig, (ax1, ax2, ax3, ax4, ax5, ax6) = plt.subplots(6, 1, figsize=(10, 15))
     for ax in [ax1, ax2, ax3, ax4, ax5, ax6]:
         ax.set(xlim=x_range)
+        ax.hlines(0, x_range[0], x_range[1])
     ax1.plot(x_data, payoff_data, c='black')
     ax2.plot(x_data, price_data, c='orange')
     ax3.plot(x_data, delta_data, c='blue')
@@ -43,6 +44,7 @@ def plot_greeks_spot_fixed(spot: float, tte: float, vol: float, strike_range: tu
 
     for ax in [ax1, ax2, ax3, ax4]:
         ax.set(xlim=strike_range)
+        ax.hlines(0, strike_range[0], strike_range[1])
 
     ax1.plot(x_data, delta_data, c='blue')
     ax2.plot(x_data, gamma_data, c='green')
