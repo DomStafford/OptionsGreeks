@@ -11,9 +11,13 @@ class Portfolio:
         self.gamma_func = None
         self.theta_func = None
         self.vega_func = None
+        self.rho_func = None
+        self.volga_func = None
+        self.charm_func = None
+        self.vanna_func = None
 
-    def add_option(self, strike: float, tte: float, vol: float, typ: str, volume: int):
-        self.lst.append([create_option(strike, tte, vol, typ), volume])
+    def add_option(self, strike: float, tte: float, vol: float, typ: str, volume: int, rate: float = 0):
+        self.lst.append([create_option(strike, tte, vol, typ, rate), volume])
 
     def add_payoff_func(self):
         def func(x):
@@ -56,10 +60,38 @@ class Portfolio:
                 result += option[0].vega_func(x) * option[1]
             return result
 
+        def rho(x):
+            result = 0
+            for option in self.lst:
+                result += option[0].rho_func(x) * option[1]
+            return result
+
+        def charm(x):
+            result = 0
+            for option in self.lst:
+                result += option[0].charm_func(x) * option[1]
+            return result
+
+        def volga(x):
+            result = 0
+            for option in self.lst:
+                result += option[0].volga_func(x) * option[1]
+            return result
+
+        def vanna(x):
+            result = 0
+            for option in self.lst:
+                result += option[0].vanna_func(x) * option[1]
+            return result
+
         self.delta_func = delta
         self.gamma_func = gamma
         self.theta_func = theta
         self.vega_func = vega
+        self.rho_func = rho
+        self.charm_func = charm
+        self.volga_func = volga
+        self.vanna_func = vanna
 
     def add_everything(self):
         self.add_payoff_func()
