@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 from Initialisation import create_option
+import numpy as np
 
 COLOURS =['red', 'green', 'magenta', 'violet', 'chocolate', 'crimson',
                'darkorchid', 'lime', 'lavender', 'mistyrose']
@@ -24,11 +25,11 @@ def plot_greeks(option, x_range: tuple = (0, 100), step: float = 0.1):
 
 def plot_greeks_spot_fixed(spot: float, tte: float, vol: float, strike_range: tuple = (0, 100), step: float = 0.01):
     global COLOURS
-    x_data = [i * step for i in range(strike_range[0], int(strike_range[1] / step))]
+    x_data = np.arange(start=strike_range[0], stop=strike_range[1], step=step)
     calls = [create_option(strike=x, tte=tte, vol=vol, typ='C') for x in x_data]
     puts = [create_option(strike=x, tte=tte, vol=vol, typ='P') for x in x_data]
-    attrs = ['payoff', 'gamma', 'theta', 'vega', 'charm', 'volga', 'vanna']
-    attrs_for_both = ['delta', 'rho', 'price']
+    attrs = ['gamma', 'theta', 'vega', 'charm', 'volga', 'vanna']
+    attrs_for_both = ['payoff', 'delta', 'rho', 'price']
     dic = {}
     for attr in attrs:
         dic['call_' + attr] = [getattr(call, attr + '_func')(spot) for call in calls]
@@ -40,6 +41,7 @@ def plot_greeks_spot_fixed(spot: float, tte: float, vol: float, strike_range: tu
     for ax, attr, col in zip(axes, attrs_in_order, COLOURS):
         if attr in attrs_for_both:
             ax.set(xlim=strike_range)
+            ax.hlines(0, strike_range[0], strike_range[1])
             ax.plot(x_data, dic['call_' + attr], c=col, label='Call')
             ax.plot(x_data, dic['put_' + attr], label='Put')
             ax.set_xlabel('Strike')
@@ -47,6 +49,7 @@ def plot_greeks_spot_fixed(spot: float, tte: float, vol: float, strike_range: tu
             ax.legend()
         else:
             ax.set(xlim=strike_range)
+            ax.hlines(0, strike_range[0], strike_range[1])
             ax.plot(x_data, dic['call_' + attr], c=col)
             ax.set_xlabel('Strike')
             ax.set_ylabel(attr.capitalize())
